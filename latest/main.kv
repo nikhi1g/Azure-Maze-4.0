@@ -1,0 +1,25 @@
+<MainScreen>:
+    button1: button1
+    button2: button2
+
+    name: 'main'
+    FloatLayout:
+        size_hint: None, None
+
+    DPEAButton:
+        id: button1
+        text: 'o'
+        size: 100, 100
+        center_x: root.width * .5
+        center_y: root.height * 0.5
+        color: 0, 1, 0, 1
+        on_press: root.pressed()
+
+    DPEAButton:
+        id: button2
+        text: ' '
+        size: 30, 30
+        center_x: root.width * .9
+        center_y: root.height * 0.5
+        color: 0, 0, 0, 1
+        on_press: root.pressed()
