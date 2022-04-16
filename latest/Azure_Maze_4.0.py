@@ -265,7 +265,7 @@ class MainScreen(Screen):
     timer = ObjectProperty(None)
 
     def timer_object_update(self):
-
+        self.timer.pos_hint={"x": 0, "y": 0}
         self.timer.font_size = 150
 
         self.timer.text = "GET READY!"
@@ -295,7 +295,7 @@ class MainScreen(Screen):
                 temp = self.timer.text
                 self.timer.text = "Your Score: " + temp + " seconds"
                 self.timer.font_size = 80
-                self.timer.pos_hint = {"x": 0, "y": -.3}
+                self.timer.pos_hint = {"x": 0, "y": -.38}
                 break
             # if knect.Kinect_Motor_Is_On == False:
             #     print("Seconds Passed:", seconds)
@@ -389,6 +389,7 @@ class MainScreen(Screen):
 
         self.enter.pos_hint = {"x": offset_num, "y": offset_num}
         self.nicknamekv.pos_hint = {"x": offset_num, "y": offset_num}
+        self.nicknamekv.text = "Move your right hand to move the mouse,\nmove your left above your head to click!"
 
     def letter_key_update(self, button):
         self.nickname += button.text
@@ -431,20 +432,13 @@ class MainScreen(Screen):
     def set_leaderboard_objects(self):
         self.first_place.pos_hint = {"x": 0, "y": 0}
         self.leaderboard_text.pos_hint = {"x": 0, "y": 0.44}
-        self.currentscore.pos_hint = {"x": 0, "y": -0.44}
 
     def reset_leaderboard_objects(self):
         offset = 1.9
         self.first_place.pos_hint = {"x": offset, "y": 0}
         self.leaderboard_text.pos_hint = {"x": offset, "y": 0.44}
-        self.currentscore.pos_hint = {"x": offset, "y": -0.44}
 
     def score_update(self):
-
-        # with open('storage.txt', 'r') as f:
-        #     last_line = f.readlines()[-1]
-        #     # placeholder = "Your score: " + str(last_line.split()[0]) + " seconds"
-        #     # self.currentscore.text = placeholder
 
         scores = []
         names = []
@@ -461,14 +455,8 @@ class MainScreen(Screen):
         pairs.sort(key=lambda pair: int(pair[0]))
         print("Pairs After:", pairs)
         pairsList = dict(pairs)
-        with open("logging.txt", "w") as f:
-            f.truncate(0)
-            for i in pairsList:
-                f.write(pairsList[i] + "\n")
 
-        # string = ""
-        # for element in pairs:
-        #     string += element
+
 
         count = 0
         score_board = ""
@@ -476,6 +464,12 @@ class MainScreen(Screen):
             score_board += pairs[count][0] + " " + pairs[count][1] + "\n"
             count += 1
         self.first_place.text = score_board
+
+
+        Thread(target=self.testfunctiondeletelater).start()
+    def testfunctiondeletelater(self):
+        sleep(3)
+        self.on_enter_mainscreen()
 
 
 # start (i already know how to play option), timer, keyboard, leaderboard, start
