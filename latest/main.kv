@@ -1,25 +1,359 @@
 <MainScreen>:
-    button1: button1
-    button2: button2
 
+    on_enter: root.on_enter_mainscreen()
+
+    color: 1,1,1,1
     name: 'main'
+    a1: a1
+    b1: b1
+    c1: c1
+    d1: d1
+    e1: e1
+    f1: f1
+    g1: g1
+    h1: h1
+    i1: i1
+    j1: j1
+    k1: k1
+    l1: l1
+    m1: m1
+    n1: n1
+    o1: o1
+    p1: p1
+    q1: q1
+    r1: r1
+    s1: s1
+    t1: t1
+    u1: u1
+    v1: v1
+    w1: w1
+    x1: x1
+    y1: y1
+    z1: z1
+    space:space
+    star:star
+    delete:delete
+    dash:dash
+    enter:enter
+    nicknamekv:nicknamekv
+
+    timer:timer
+
+    first_place:first_place
+    leaderboard_text:leaderboard_text
+
     FloatLayout:
         size_hint: None, None
 
-    DPEAButton:
-        id: button1
-        text: 'o'
-        size: 100, 100
-        center_x: root.width * .5
-        center_y: root.height * 0.5
-        color: 0, 1, 0, 1
-        on_press: root.pressed()
+    Label:
+        id:nicknamekv
+        text: "Enter Your Name: "
+        pos_hint:{"x":0,"y": .45}
+        color: 0, 0, 0, 1
+        font_size: 80
+
+    Label:
+        id:timer
+        text: "Time: "
+        pos_hint:{"x":0,"y": 0}
+        color: 0, 0, 0, 1
+        font_size: 100
 
     DPEAButton:
-        id: button2
-        text: ' '
-        size: 30, 30
-        center_x: root.width * .9
-        center_y: root.height * 0.5
-        color: 0, 0, 0, 1
-        on_press: root.pressed()
+        id: a1
+        text: 'a'
+        size: 50, 50
+        pos_hint:{"x":.52,"y": .4}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(a1)
+
+    DPEAButton:
+        id: b1
+        text: 'b'
+        size: 50, 50
+        pos_hint:{"x":.72,"y": .40}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(b1)
+
+    DPEAButton:
+        id: c1
+        text: 'c'
+        size: 50, 50
+        pos_hint:{"x":.12,"y": .40}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(c1)
+
+    DPEAButton:
+        id: d1
+        text: 'd'
+        size: 50, 50
+        pos_hint:{"x":.02,"y": .40}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(d1)
+
+    DPEAButton:
+        id: e1
+        text: 'e'
+        size: 50, 50
+        pos_hint:{"x":.22,"y": .55}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(e1)
+
+    DPEAButton:
+        id: f1
+        text: 'f'
+        size: 50, 50
+        pos_hint:{"x":.12,"y": .25}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(f1)
+
+    DPEAButton:
+        id: g1
+        text: 'g'
+        size: 50, 50
+        pos_hint:{"x":.02,"y": .25}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(g1)
+
+    DPEAButton:
+        id: h1
+        text: 'h'
+        size: 50, 50
+        pos_hint:{"x":.22,"y": .40}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(h1)
+
+    DPEAButton:
+        id: i1
+        text: 'i'
+        size: 50, 50
+        pos_hint:{"x":.22,"y": .25}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(i1)
+
+    DPEAButton:
+        id: j1
+        text: 'j'
+        size: 50, 50
+        pos_hint:{"x":.52,"y": .25}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(j1)
+
+    DPEAButton:
+        id: k1
+        text: 'k'
+        size: 50, 50
+        pos_hint:{"x":.32,"y": .4}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(k1)
+
+    DPEAButton:
+        id: l1
+        text: 'l'
+        size: 50, 50
+        pos_hint:{"x":.32,"y": .25}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(l1)
+
+    DPEAButton:
+        id: m1
+        text: 'm'
+        size: 50, 50
+        pos_hint:{"x":.42,"y": .55}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(m1)
+
+    DPEAButton:
+        id:n1
+        text: 'n'
+        size: 50, 50
+        pos_hint:{"x":.42,"y": .4}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(n1)
+
+    DPEAButton:
+        id: o1
+        text: 'o'
+        size: 50, 50
+        pos_hint:{"x":.42,"y": .25}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(o1)
+
+    DPEAButton:
+        id: p1
+        text: 'p'
+        size: 50, 50
+        pos_hint:{"x":.52,"y": .55}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(p1)
+
+    DPEAButton:
+        id: q1
+        text: 'q'
+        size: 50, 50
+        pos_hint:{"x":.02,"y": .55}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(q1)
+
+    DPEAButton:
+        id: r1
+        text: 'r'
+        size: 50, 50
+        pos_hint:{"x":.32,"y": .55}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(r1)
+
+    DPEAButton:
+        id: s1
+        text: 's'
+        size: 50, 50
+        pos_hint:{"x":.62,"y": .55}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(s1)
+
+    DPEAButton:
+        id: t1
+        text: 't'
+        size: 50, 50
+        pos_hint:{"x":.42,"y": .40}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(t1)
+
+    DPEAButton:
+        id: u1
+        text: 'u'
+        size: 50, 50
+        pos_hint:{"x":.62,"y": .55}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(u1)
+
+    DPEAButton:
+        id: v1
+        text: 'v'
+        size: 50, 50
+        pos_hint:{"x":.72,"y": .55}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(v1)
+
+    DPEAButton:
+        id: w1
+        text: 'w'
+        size: 50, 50
+        pos_hint:{"x":.12,"y": .55}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(w1)
+
+    DPEAButton:
+        id: x1
+        text: 'x'
+        size: 50, 50
+        pos_hint:{"x":.72,"y": .25}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(x1)
+
+    DPEAButton:
+        id: y1
+        text: 'y'
+        size: 50, 50
+        pos_hint:{"x":.52,"y": .55}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(y1)
+
+    DPEAButton:
+        id: z1
+        text: 'z'
+        size: 50, 50
+        pos_hint:{"x":.82,"y": .40}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(z1)
+
+    DPEAButton:
+        id: space
+        text: '_'
+        size: 50, 50
+        pos_hint:{"x":.82,"y": .25}
+        color: 0, 1, 0, 1
+        font_size: .2
+        on_press: root.letter_key_update(space)
+
+    DPEAButton:
+        id: star
+        text: '*'
+        size: 50, 50
+        pos_hint:{"x":.92,"y": .55}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(star)
+
+    DPEAButton:
+        id: dash
+        text: '-'
+        size: 50, 50
+        pos_hint:{"x":.92,"y": .40}
+        color: 0, 1, 0, 1
+        font_size: 20
+        on_press: root.letter_key_update(dash)
+
+    DPEAButton:
+        id: delete
+        text: 'del'
+        size: 50, 50
+        pos_hint:{"x":.92,"y": .25}
+        color: 0, 1, 0, 1
+        font_size: .2
+        on_press: root.delete_key_update()
+
+    DPEAButton:
+        id: enter
+        text: 'Enter'
+        size: 100, 50
+        pos_hint:{"x":.2,"y": .1}
+        color: 0, 1, 0, 1
+        font_size: .2
+        on_press: root.enter_key_update()
+
+
+    Label:
+        id:first_place
+        text: "1st Place: "
+        pos_hint:{"x":0,"y": 0}
+        color: "lightblue"
+        font_size: 30
+
+    Label:
+        id: leaderboard_text
+        text: "Top Scorers:"
+        pos_hint:{"x":0,"y":0.44}
+        color: 0,.1,0,1
+        font_size: 50
+
+
+
+
+

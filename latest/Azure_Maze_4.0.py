@@ -4,13 +4,13 @@ import os
 import cv2
 import pyautogui
 import sys
-
+import this
 from kivy.uix.button import Button
-from pykinect_azure.k4abt._k4abtTypes import K4ABT_JOINT_NAMES
-from pykinect_azure.k4abt import _k4abt
 
-import pykinect_azure as pykinect
-from pykinect_azure.k4a import _k4a
+# from pykinect_azure.k4abt._k4abtTypes import K4ABT_JOINT_NAMES
+# from pykinect_azure.k4abt import _k4abt
+# import pykinect_azure as pykinect
+# from pykinect_azure.k4a import _k4a
 from ODrive_Ease_Lib import *
 from time import sleep
 
@@ -219,7 +219,9 @@ class Kinect:
             percx = int(percx)
             percy = int(percy)
             if ly < heady:
-                click()
+                mouseDown()
+            elif ly >= heady:
+                mouseUp()
             self.moveTo_percent(100 - percx, 100 - percy)
         except AttributeError:
             pass
@@ -248,38 +250,246 @@ class KinectGUI(App):
         return SCREEN_MANAGER
 
 
-Window.clearcolor = (0, 1, 0, 1)
+Window.clearcolor = (0.5, 0.5, 0.5, 0.5)
 
 
 class MainScreen(Screen):
+    def on_enter_mainscreen(self):
+        self.reset_keyboard_objects()
+        self.reset_leaderboard_objects()
+        Thread(target=self.timer_object_update).start()
+
     """
-    Class to handle the main screen and its associated touch events
+    Section of Class to handle the timer gui and its associated touch events
     """
-    button1 = ObjectProperty(None)
-    button2 = ObjectProperty(None)
+    timer = ObjectProperty(None)
 
-    def pressed(self):
-        """
-        Function called on button touch event for button with id: testButton
-        :return: None
-        """
-        # print(knect.motor.ax.get_vel())
-        pass
-        # print(self.button2.x)                x = knect.generate_points("right hand").x
+    def timer_object_update(self):
+
+        self.timer.font_size = 150
+
+        self.timer.text = "GET READY!"
+        sleep(2)
+        self.timer.text = "THREE"
+        sleep(0.8)
+        self.timer.text = "TWO"
+        sleep(0.8)
+        self.timer.text = "ONE"
+        sleep(0.8)
+        self.timer.text = "GO!!!"
+        sleep(0.7)
+        time_start = time.time()
+        while True:
+            seconds = int(time.time() - time_start)
+            print(seconds, 'seconds passed')
+            print('')
+            self.timer.font_size = 400
+            self.timer.text = str(seconds)
+            sleep(1)
+            if seconds == 2:
+                print("Seconds Passed:", seconds)
+                file = open('storage.txt', 'a')
+                file.write(str(seconds) + ' ')
+                file.close()
+                self.set_keyboard_objects()
+                temp = self.timer.text
+                self.timer.text = "Your Score: " + temp + " seconds"
+                self.timer.font_size = 80
+                self.timer.pos_hint = {"x": 0, "y": -.3}
+                break
+            # if knect.Kinect_Motor_Is_On == False:
+            #     print("Seconds Passed:", seconds)
+            #     file = open('storage.txt', 'a')
+            #     file.write('\n' + str(seconds) + '')
+            #     file.close()
+            #     break
+
+    """
+    Section of Class to handle the keyboard gui and its associated touch events
+    """
+    a1 = ObjectProperty(None)
+    b1 = ObjectProperty(None)
+    c1 = ObjectProperty(None)
+    d1 = ObjectProperty(None)
+    e1 = ObjectProperty(None)
+    f1 = ObjectProperty(None)
+    g1 = ObjectProperty(None)
+    h1 = ObjectProperty(None)
+    i1 = ObjectProperty(None)
+    j1 = ObjectProperty(None)
+    k1 = ObjectProperty(None)
+    l1 = ObjectProperty(None)
+    m1 = ObjectProperty(None)
+    n1 = ObjectProperty(None)
+    o1 = ObjectProperty(None)
+    p1 = ObjectProperty(None)
+    q1 = ObjectProperty(None)
+    r1 = ObjectProperty(None)
+    s1 = ObjectProperty(None)
+    t1 = ObjectProperty(None)
+    u1 = ObjectProperty(None)
+    v1 = ObjectProperty(None)
+    w1 = ObjectProperty(None)
+    x1 = ObjectProperty(None)
+    y1 = ObjectProperty(None)
+    z1 = ObjectProperty(None)
+    space = ObjectProperty(None)
+    star = ObjectProperty(None)
+    dash = ObjectProperty(None)
+    delete = ObjectProperty(None)
+    enter = ObjectProperty(None)
+    nicknamekv = ObjectProperty(None)
+
+    # cursormovement
+    square = ObjectProperty(None)
+
+    nickname = ""
+
+    def set_keyboard_objects(self, color: str = "lightblue"):
+        keyboard_buttons = [self.q1, self.w1, self.e1, self.r1, self.t1, self.y1, self.u1, self.i1, self.o1, self.p1,
+                            self.a1, self.s1, self.d1, self.f1, self.g1, self.h1, self.j1, self.k1, self.l1, self.space,
+                            self.z1, self.x1, self.c1, self.v1, self.b1, self.n1, self.m1, self.star, self.dash,
+                            self.delete, self.enter]
+        x_spacing = .1
+        y_spacing = -.15
+        x_offset = 0
+        y_offset = 0
+        button_count = 0
+        for btn in keyboard_buttons:
+            btn.pos_hint = {"x": .02 + x_offset, "y": .55 + y_offset}
+            button_count += 1
+            x_offset += x_spacing
+            btn.color = color
+            if button_count % 10 == 0:
+                x_offset = 0
+                y_offset += y_spacing
+
+        self.enter.pos_hint = {"x": 0.1, "y": .1}
+        self.nicknamekv.pos_hint = {"x": 0, "y": .3}
+
+    def reset_keyboard_objects(self, color: str = "lightblue"):
+        offset_num = 1.5
+        keyboard_buttons = [self.q1, self.w1, self.e1, self.r1, self.t1, self.y1, self.u1, self.i1, self.o1, self.p1,
+                            self.a1, self.s1, self.d1, self.f1, self.g1, self.h1, self.j1, self.k1, self.l1, self.space,
+                            self.z1, self.x1, self.c1, self.v1, self.b1, self.n1, self.m1, self.star, self.dash,
+                            self.delete, self.enter]
+        x_spacing = .1
+        y_spacing = -.15
+        x_offset = 0
+        y_offset = 0
+        button_count = 0
+        for btn in keyboard_buttons:
+            btn.pos_hint = {"x": offset_num + x_offset, "y": offset_num + y_offset}
+            button_count += 1
+            x_offset += x_spacing
+            btn.color = color
+            if button_count % 10 == 0:
+                x_offset = 0
+                y_offset += y_spacing
+
+        self.enter.pos_hint = {"x": offset_num, "y": offset_num}
+        self.nicknamekv.pos_hint = {"x": offset_num, "y": offset_num}
+
+    def letter_key_update(self, button):
+        self.nickname += button.text
+        self.timer_update()
+
+    def delete_key_update(self):
+        self.nickname = self.nickname[:-1]
+        self.timer_update()
+
+    def enter_key_update(self):
+        if len(self.nickname) > 1:
+            if self.nickname != "Not A Valid Input!":
+                with open("storage.txt", "a") as f:
+                    f.write(str(self.nickname + "\n"))
+                self.reset_keyboard_objects()
+                self.score_update()
+                self.set_leaderboard_objects()
+        else:
+            self.nicknamekv.text = "Not A Valid Input!"
+            self.nickname = ""
+
+    def timer_update(self):
+        self.nicknamekv.text = str(self.nickname)
+        self.profanity_check(self.nickname)
+        # self.nickname[0:] = self.nickname[0:].upper() # trying to uppercase the first char of string
+
+    def profanity_check(self, streng: str):
+        profanity_list = ["fuc"]
+        for item in profanity_list:
+            if streng == item:
+                self.nickname = ""
+                self.nicknamekv.text = ""
+
+    """
+        Section of Class to handle the leaderboard gui and its associated events
+    """
+    first_place = ObjectProperty(None)
+    leaderboard_text = ObjectProperty(None)
+
+    def set_leaderboard_objects(self):
+        self.first_place.pos_hint = {"x": 0, "y": 0}
+        self.leaderboard_text.pos_hint = {"x": 0, "y": 0.44}
+        self.currentscore.pos_hint = {"x": 0, "y": -0.44}
+
+    def reset_leaderboard_objects(self):
+        offset = 1.9
+        self.first_place.pos_hint = {"x": offset, "y": 0}
+        self.leaderboard_text.pos_hint = {"x": offset, "y": 0.44}
+        self.currentscore.pos_hint = {"x": offset, "y": -0.44}
+
+    def score_update(self):
+
+        # with open('storage.txt', 'r') as f:
+        #     last_line = f.readlines()[-1]
+        #     # placeholder = "Your score: " + str(last_line.split()[0]) + " seconds"
+        #     # self.currentscore.text = placeholder
+
+        scores = []
+        names = []
+        with open("storage.txt", "r") as file:
+            for line in file:
+                split_line = line.strip().split()
+                scores.append(split_line[0])
+                names.append(split_line[1])
+        print("Scores:", scores)
+        print("Names:", names)
+
+        pairs = list(zip(scores, names))
+        print("Pairs Before:", pairs)
+        pairs.sort(key=lambda pair: int(pair[0]))
+        print("Pairs After:", pairs)
+        pairsList = dict(pairs)
+        with open("logging.txt", "w") as f:
+            f.truncate(0)
+            for i in pairsList:
+                f.write(pairsList[i] + "\n")
+
+        # string = ""
+        # for element in pairs:
+        #     string += element
+
+        count = 0
+        score_board = ""
+        while count < 10:
+            score_board += pairs[count][0] + " " + pairs[count][1] + "\n"
+            count += 1
+        self.first_place.text = score_board
 
 
+# start (i already know how to play option), timer, keyboard, leaderboard, start
 if __name__ == "__main__":
-    knect = Kinect()
-
+    # knect = Kinect()
     try:
         Builder.load_file('main.kv')
         SCREEN_MANAGER.add_widget(MainScreen(name=MAIN_SCREEN_NAME))
-        knect.start()
+        # knect.start()
         KinectGUI().run()
     finally:
-        knect.off()
+        # knect.off()
         print('ending')
-        knect.motor.ax.idle()
+        # knect.motor.ax.idle()
 
 # kinect_motor = odrive_motor('207C34975748', 15, 9)
 # kinect_motor.calibrate()
