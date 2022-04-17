@@ -31,7 +31,6 @@ from time import sleep
 # from Firmata import Firmata
 from pyfirmata import Arduino, util
 
-
 import numpy as np
 import cv2
 from kivy.graphics.texture import Texture
@@ -44,6 +43,11 @@ from pidev.kivy.selfupdatinglabel import SelfUpdatingLabel
 from pidev.MixPanel import MixPanel
 
 
+
+
+
+
+    
 class OdriveMotor:
     def __init__(self, odrive_serial_number, current_limit, velocity_limit):
         self.serial_number = odrive_serial_number
@@ -259,14 +263,13 @@ class MainScreen(Screen):
         self.reset_leaderboard_objects()
         Thread(target=self.timer_object_update).start()
 
-
     """
     Section of Class to handle the timer gui and its associated touch events
     """
     timer = ObjectProperty(None)
 
     def timer_object_update(self):
-        self.timer.pos_hint={"x": 0, "y": 0}
+        self.timer.pos_hint = {"x": 0, "y": 0}
         self.timer.font_size = 250
 
         self.timer.text = "GET READY!"
@@ -431,6 +434,7 @@ class MainScreen(Screen):
     first_place = ObjectProperty(None)
     leaderboard_text = ObjectProperty(None)
     pairsList = None
+
     def set_leaderboard_objects(self):
         self.first_place.pos_hint = {"x": 0, "y": 0}
         self.leaderboard_text.pos_hint = {"x": 0, "y": 0.44}
@@ -439,8 +443,6 @@ class MainScreen(Screen):
         offset = 1.9
         self.first_place.pos_hint = {"x": offset, "y": 0}
         self.leaderboard_text.pos_hint = {"x": offset, "y": 0.44}
-
-
 
     def score_update(self):
 
@@ -451,7 +453,6 @@ class MainScreen(Screen):
                 split_line = line.strip().split()
                 scores.append(split_line[0])
                 names.append(split_line[1])
-
 
         pairs = list(zip(scores, names))
         pairs.sort(key=lambda pair: int(pair[0]))
@@ -464,16 +465,18 @@ class MainScreen(Screen):
             count += 1
         self.first_place.text = score_board
 
-
         Thread(target=self.testfunctiondeletelater).start()
+
     def testfunctiondeletelater(self):
         sleep(3)
         self.on_enter_mainscreen()
 
+
 def email_process():
     os.system("python3 KineticMail.py")
-# start (i already know how to play option), timer, keyboard, leaderboard, start
-if __name__ == "__main__":
+
+
+def start_everything():
     # knect = Kinect()
     try:
         Thread(target=email_process, daemon=True).start()
@@ -485,6 +488,12 @@ if __name__ == "__main__":
         # knect.off()
         print('ending')
         # knect.motor.ax.idle()
+
+if __name__ == "__main__":
+    start_everything()
+
+
+# start (i already know how to play option), timer, keyboard, leaderboard, start
 
 # kinect_motor = odrive_motor('207C34975748', 15, 9)
 # kinect_motor.calibrate()
