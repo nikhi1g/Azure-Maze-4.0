@@ -13,7 +13,6 @@ from kivy.uix.button import Button
 # from pykinect_azure.k4a import _k4a
 from ODrive_Ease_Lib import *
 from time import sleep
-
 # uiStuff
 import datetime
 import random
@@ -31,6 +30,7 @@ from time import sleep
 # from Email import Email
 # from Firmata import Firmata
 from pyfirmata import Arduino, util
+
 
 import numpy as np
 import cv2
@@ -250,7 +250,7 @@ class KinectGUI(App):
         return SCREEN_MANAGER
 
 
-Window.clearcolor = (0.5, 0.5, 0.5, 0.5)
+Window.clearcolor = (0.5, 0.5, 0.5, 0.2)
 
 
 class MainScreen(Screen):
@@ -259,6 +259,7 @@ class MainScreen(Screen):
         self.reset_leaderboard_objects()
         Thread(target=self.timer_object_update).start()
 
+
     """
     Section of Class to handle the timer gui and its associated touch events
     """
@@ -266,7 +267,7 @@ class MainScreen(Screen):
 
     def timer_object_update(self):
         self.timer.pos_hint={"x": 0, "y": 0}
-        self.timer.font_size = 150
+        self.timer.font_size = 250
 
         self.timer.text = "GET READY!"
         sleep(2)
@@ -281,13 +282,10 @@ class MainScreen(Screen):
         time_start = time.time()
         while True:
             seconds = int(time.time() - time_start)
-            print(seconds, 'seconds passed')
-            print('')
             self.timer.font_size = 400
             self.timer.text = str(seconds)
             sleep(1)
-            if seconds == 2:
-                print("Seconds Passed:", seconds)
+            if seconds == 1:
                 file = open('storage.txt', 'a')
                 file.write(str(seconds) + ' ')
                 file.close()
@@ -393,6 +391,9 @@ class MainScreen(Screen):
 
     def letter_key_update(self, button):
         self.nickname += button.text
+        first_caps = self.nickname[0].upper()
+        self.nickname = self.nickname[1:]
+        self.nickname = first_caps + self.nickname
         self.timer_update()
 
     def delete_key_update(self):
@@ -404,6 +405,7 @@ class MainScreen(Screen):
             if self.nickname != "Not A Valid Input!":
                 with open("storage.txt", "a") as f:
                     f.write(str(self.nickname + "\n"))
+                    self.nickname = ""
                 self.reset_keyboard_objects()
                 self.score_update()
                 self.set_leaderboard_objects()
@@ -417,9 +419,9 @@ class MainScreen(Screen):
         # self.nickname[0:] = self.nickname[0:].upper() # trying to uppercase the first char of string
 
     def profanity_check(self, streng: str):
-        profanity_list = ["fuc"]
-        for item in profanity_list:
-            if streng == item:
+        profanity_list = ["fuc", 'bit']
+        for i in range(len(profanity_list)):
+            if profanity_list[i] in self.nickname.lower():
                 self.nickname = ""
                 self.nicknamekv.text = ""
 
@@ -428,7 +430,7 @@ class MainScreen(Screen):
     """
     first_place = ObjectProperty(None)
     leaderboard_text = ObjectProperty(None)
-
+    pairsList = None
     def set_leaderboard_objects(self):
         self.first_place.pos_hint = {"x": 0, "y": 0}
         self.leaderboard_text.pos_hint = {"x": 0, "y": 0.44}
@@ -437,6 +439,8 @@ class MainScreen(Screen):
         offset = 1.9
         self.first_place.pos_hint = {"x": offset, "y": 0}
         self.leaderboard_text.pos_hint = {"x": offset, "y": 0.44}
+
+
 
     def score_update(self):
 
@@ -447,21 +451,16 @@ class MainScreen(Screen):
                 split_line = line.strip().split()
                 scores.append(split_line[0])
                 names.append(split_line[1])
-        print("Scores:", scores)
-        print("Names:", names)
+
 
         pairs = list(zip(scores, names))
-        print("Pairs Before:", pairs)
         pairs.sort(key=lambda pair: int(pair[0]))
-        print("Pairs After:", pairs)
-        pairsList = dict(pairs)
+        self.pairsList = dict(pairs)
 
-
-
-        count = 0
+        count = 1
         score_board = ""
-        while count < 10:
-            score_board += pairs[count][0] + " " + pairs[count][1] + "\n"
+        while count < 11:
+            score_board += str(count) + ". " + pairs[count][0] + " " + pairs[count][1] + "\n"
             count += 1
         self.first_place.text = score_board
 
@@ -471,11 +470,13 @@ class MainScreen(Screen):
         sleep(3)
         self.on_enter_mainscreen()
 
-
+def email_process():
+    os.system("python3 KineticMail.py")
 # start (i already know how to play option), timer, keyboard, leaderboard, start
 if __name__ == "__main__":
     # knect = Kinect()
     try:
+        Thread(target=email_process, daemon=True).start()
         Builder.load_file('main.kv')
         SCREEN_MANAGER.add_widget(MainScreen(name=MAIN_SCREEN_NAME))
         # knect.start()
