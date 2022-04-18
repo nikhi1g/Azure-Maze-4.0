@@ -43,11 +43,6 @@ from pidev.kivy.selfupdatinglabel import SelfUpdatingLabel
 from pidev.MixPanel import MixPanel
 
 
-
-
-
-
-    
 class OdriveMotor:
     def __init__(self, odrive_serial_number, current_limit, velocity_limit):
         self.serial_number = odrive_serial_number
@@ -196,8 +191,6 @@ class Kinect:
         if self.close_body is not None:
             return self.close_body.joints[K4ABT_JOINT_NAMES.index(joint)].position.xyz  # return + .xyorz
 
-            # print('no body found', e)
-
     def moveTo_percent(percX: int, percY: int, seconds=0.01):
         screen_size = size()
 
@@ -209,15 +202,15 @@ class Kinect:
 
     def move_to_hand(self):
         try:
-            x = self.generate_points("right hand").x
-            y = self.generate_points("right hand").y
+            righthandx = self.generate_points("right hand").x
+            righthandy = self.generate_points("right hand").y
             ly = self.generate_points("left hand").y
             heady = self.generate_points("head").y
 
-            x += 1000
-            y += 1000
-            percx = x / 2000
-            percy = y / 2000
+            righthandx += 1000
+            righthandy += 1000
+            percx = righthandx / 2000
+            percy = righthandy / 2000
             percx *= 100
             percy *= 100
             percx = int(percx)
@@ -267,8 +260,10 @@ class MainScreen(Screen):
     Section of Class to handle the timer gui and its associated touch events
     """
     timer = ObjectProperty(None)
+    seconds = None
 
     def timer_object_update(self):
+        self.seconds = 0
         self.timer.pos_hint = {"x": 0, "y": 0}
         self.timer.font_size = 250
 
@@ -284,14 +279,14 @@ class MainScreen(Screen):
         sleep(0.7)
         time_start = time.time()
         while True:
-            seconds = int(time.time() - time_start)
+            self.seconds = int(time.time() - time_start)
             self.timer.font_size = 400
-            self.timer.text = str(seconds)
+            self.timer.text = str(self.seconds)
             sleep(1)
-            if seconds == 1:
-                file = open('storage.txt', 'a')
-                file.write(str(seconds) + ' ')
-                file.close()
+            if self.seconds == 1:  # possible
+                # file = open('storage.txt', 'a')
+                # file.write(str(self.seconds) + ' ')
+                # file.close()
                 self.set_keyboard_objects()
                 temp = self.timer.text
                 self.timer.text = "Your Score: " + temp + " seconds"
@@ -407,7 +402,7 @@ class MainScreen(Screen):
         if len(self.nickname) > 1:
             if self.nickname != "Not A Valid Input!":
                 with open("storage.txt", "a") as f:
-                    f.write(str(self.nickname + "\n"))
+                    f.write(str(self.seconds) + ' ' + str(self.nickname + "\n"))
                     self.nickname = ""
                 self.reset_keyboard_objects()
                 self.score_update()
@@ -460,9 +455,13 @@ class MainScreen(Screen):
 
         count = 1
         score_board = ""
-        while count < 11:
-            score_board += str(count) + ". " + pairs[count][0] + " " + pairs[count][1] + "\n"
+        with open("storage.txt", "r") as f:
+            leader_length = len(f.readlines())
+
+        while count < leader_length:
+            score_board += str(count) + ".        " + pairs[count][0] + " " + pairs[count][1] + "\n"
             count += 1
+
         self.first_place.text = score_board
 
         Thread(target=self.testfunctiondeletelater).start()
@@ -489,9 +488,9 @@ def start_everything():
         print('ending')
         # knect.motor.ax.idle()
 
+
 if __name__ == "__main__":
     start_everything()
-
 
 # start (i already know how to play option), timer, keyboard, leaderboard, start
 
