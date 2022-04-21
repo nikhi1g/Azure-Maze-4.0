@@ -1,9 +1,20 @@
-from time import sleep
-#
-# with open("latest/storage.txt") as f:
-#     last_line = f.readlines()[-1]
-#     space_index = last_line.index(" ")
+import speech_recognition
+import pyttsx3
 
-with open("latest/storage.txt", "r+") as f:
-    if len(f.readlines()[-1]) > 0:
-        f.write("\n")
+recognizer = speech_recognition.Recognizer()
+
+while True:
+    try:
+        with speech_recognition.Microphone() as mic:
+            recognizer.adjust_for_ambient_noise(mic, duration=0.2)
+            audio = recognizer.listen(mic)
+
+            text = recognizer.recognize_google(audio)
+            text = text.lower()
+            print(f"recognized {text}")
+    except speech_recognition.UnknownValueError:
+        print("not clear audio, please try again")
+        # except Exception as e:
+
+        recognizer = speech_recognition.Recognizer()
+        continue

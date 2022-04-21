@@ -6,11 +6,12 @@ import pyautogui
 import sys
 import this
 from kivy.uix.button import Button
-
-# from pykinect_azure.k4abt._k4abtTypes import K4ABT_JOINT_NAMES
-# from pykinect_azure.k4abt import _k4abt
-# import pykinect_azure as pykinect
-# from pykinect_azure.k4a import _k4a
+# Email stuff
+import KineticMail
+from pykinect_azure.k4abt._k4abtTypes import K4ABT_JOINT_NAMES
+from pykinect_azure.k4abt import _k4abt
+import pykinect_azure as pykinect
+from pykinect_azure.k4a import _k4a
 from ODrive_Ease_Lib import *
 from time import sleep
 # uiStuff
@@ -28,7 +29,7 @@ from threading import Thread
 from kivy.clock import Clock
 from time import sleep
 # from Email import Email
-# from Firmata import Firmata
+from Firmata import Firmata
 from pyfirmata import Arduino, util
 
 import numpy as np
@@ -38,7 +39,7 @@ from kivy.clock import Clock
 from kivy.uix.image import Image
 from pidev.kivy import DPEAButton
 from pidev.kivy import ImageButton
-# from datetime import datetime
+# from datetime import datetime #not working, set date for may 30th, 2022 reminder if emails do work
 from pidev.kivy.selfupdatinglabel import SelfUpdatingLabel
 from pidev.MixPanel import MixPanel
 
@@ -69,10 +70,18 @@ class OdriveMotor:
         states = bin(self.odrive_board.get_gpio_states())
         if int(states[self.homing_sensor]) == 0:
             self.homing_sensor_tripped = True
+            # sleep(0.5)
+            # self.homing_sensor_tripped = False
         if int(states[self.ball_exit_sensor]) == 0:
             self.ball_exit_sensor_tripped = True
+            # sleep(0.5)
+            # self.ball_exit_sensor_tripped = False
         if int(states[self.ball_enter_sensor]) == 0:
             self.ball_enter_sensor_tripped = True
+            # sleep(0.5)
+            # self.ball_enter_sensor_tripped = False
+
+
 
     def check_prox_constantly(self):
         Thread(target=self.check_constantly_thread, daemon=True).start()
@@ -167,7 +176,6 @@ class Kinect:
                     self.Kinect_Motor_Is_On = False
             while not self.Kinect_Motor_Is_On:
                 self.kinect_setup_image()
-                self.move_to_hand()
             sleep(0.1)
             print('sleeping')
 
@@ -191,37 +199,15 @@ class Kinect:
         if self.close_body is not None:
             return self.close_body.joints[K4ABT_JOINT_NAMES.index(joint)].position.xyz  # return + .xyorz
 
-    def moveTo_percent(percX: int, percY: int, seconds=0.01):
+    def moveTo_percent(self, percX: int, percY: int):
         screen_size = size()
 
         screen_size_x = screen_size[0]
 
         screen_size_y = screen_size[1]
 
-        moveTo((percX / 100) * screen_size_x, screen_size_y - (percY / 100) * screen_size_y, seconds)
+        moveTo((percX / 100) * screen_size_x, screen_size_y - (percY / 100) * screen_size_y)
 
-    def move_to_hand(self):
-        try:
-            righthandx = self.generate_points("right hand").x
-            righthandy = self.generate_points("right hand").y
-            ly = self.generate_points("left hand").y
-            heady = self.generate_points("head").y
-
-            righthandx += 1000
-            righthandy += 1000
-            percx = righthandx / 2000
-            percy = righthandy / 2000
-            percx *= 100
-            percy *= 100
-            percx = int(percx)
-            percy = int(percy)
-            if ly < heady:
-                mouseDown()
-            elif ly >= heady:
-                mouseUp()
-            self.moveTo_percent(100 - percx, 100 - percy)
-        except AttributeError:
-            pass
 
 
 '''
@@ -229,6 +215,7 @@ GUI Globals
 '''
 SCREEN_MANAGER = ScreenManager()
 MAIN_SCREEN_NAME = 'main'
+WELCOME_SCREEN_NAME = 'welcome'
 '''
 GUI Globals
 '''
@@ -249,12 +236,42 @@ class KinectGUI(App):
 
 Window.clearcolor = (0.5, 0.5, 0.5, 0.2)
 
+"""
+Howdy, I am sticking in Firmata stuff because Caesar told me :P
+-KaTie
+"""
+firmata = Firmata()
+class WelcomeScreen(Screen):
+    print("hello")
+    pump_id = 0
+    def on_enter_welcomescreen(self):
+        firmata.turn_off()
+
+    def play(self):
+        firmata.change_pump(self.pump_id)
+        if self.pump_id == 1:
+            self.pump_id = 0
+        elif self.pump_id == 0:
+            self.pump_id = 1
+        SCREEN_MANAGER.current = MAIN_SCREEN_NAME
 
 class MainScreen(Screen):
+    thread_count = 0
+    print("I love pie")
     def on_enter_mainscreen(self):
+
+        if self.thread_count == 0:
+            Thread(target=KineticMail.sort_storage, daemon=True).start()
+            self.thread_count += 1
+        # while True:
+        #     if not knect.motor.ball_enter_sensor_tripped:
+        #         sleep(1)
+        #     else:
+        #         knect.motor.ball_enter_sensor_tripped = False
+        #         break
         self.reset_keyboard_objects()
         self.reset_leaderboard_objects()
-        Thread(target=self.timer_object_update).start()
+        Thread(target=self.timer_object_update, daemon=True).start()
 
     """
     Section of Class to handle the timer gui and its associated touch events
@@ -265,7 +282,7 @@ class MainScreen(Screen):
     def timer_object_update(self):
         self.seconds = 0
         self.timer.pos_hint = {"x": 0, "y": 0}
-        self.timer.font_size = 250
+        self.timer.font_size = 90
 
         self.timer.text = "GET READY!"
         sleep(2)
@@ -283,15 +300,13 @@ class MainScreen(Screen):
             self.timer.font_size = 400
             self.timer.text = str(self.seconds)
             sleep(1)
-            if self.seconds == 1:  # possible
-                # file = open('storage.txt', 'a')
-                # file.write(str(self.seconds) + ' ')
-                # file.close()
+            if knect.motor.ball_exit_sensor_tripped:
                 self.set_keyboard_objects()
                 temp = self.timer.text
                 self.timer.text = "Your Score: " + temp + " seconds"
-                self.timer.font_size = 80
+                self.timer.font_size = 30
                 self.timer.pos_hint = {"x": 0, "y": -.38}
+                knect.motor.ball_exit_sensor_tripped = False
                 break
             # if knect.Kinect_Motor_Is_On == False:
             #     print("Seconds Passed:", seconds)
@@ -417,7 +432,7 @@ class MainScreen(Screen):
         # self.nickname[0:] = self.nickname[0:].upper() # trying to uppercase the first char of string
 
     def profanity_check(self, streng: str):
-        profanity_list = ["fuc", 'bit']
+        profanity_list = ["fuc", 'bitc']
         for i in range(len(profanity_list)):
             if profanity_list[i] in self.nickname.lower():
                 self.nickname = ""
@@ -436,8 +451,8 @@ class MainScreen(Screen):
 
     def reset_leaderboard_objects(self):
         offset = 1.9
-        self.first_place.pos_hint = {"x": offset, "y": 0}
-        self.leaderboard_text.pos_hint = {"x": offset, "y": 0.44}
+        self.first_place.pos_hint = {"x": offset, "y": offset}
+        self.leaderboard_text.pos_hint = {"x": offset, "y": offset}
 
     def score_update(self):
 
@@ -462,36 +477,47 @@ class MainScreen(Screen):
             score_board += str(count) + ".        " + pairs[count][0] + " " + pairs[count][1] + "\n"
             count += 1
 
+
         self.first_place.text = score_board
 
-        Thread(target=self.testfunctiondeletelater).start()
-
-    def testfunctiondeletelater(self):
-        sleep(3)
         self.on_enter_mainscreen()
 
 
-def email_process():
-    os.system("python3 KineticMail.py")
+#
+# def email_process():
+#     os.system("python3.8 KineticMail.py")
 
 
 def start_everything():
-    # knect = Kinect()
+    global knect
+    knect = Kinect()
     try:
-        Thread(target=email_process, daemon=True).start()
+        # Thread(target=email_process, daemon=True).start()
         Builder.load_file('main.kv')
+
         SCREEN_MANAGER.add_widget(MainScreen(name=MAIN_SCREEN_NAME))
-        # knect.start()
+        knect.start()
         KinectGUI().run()
     finally:
-        # knect.off()
+        knect.motor.ax.idle()
+        knect.off()
         print('ending')
-        # knect.motor.ax.idle()
 
 
 if __name__ == "__main__":
-    start_everything()
-
+    knect = Kinect()
+    try:
+        # Thread(target=email_process, daemon=True).start() #this breaks everytinbg
+        Builder.load_file('main.kv')
+        SCREEN_MANAGER.add_widget(WelcomeScreen(name=WELCOME_SCREEN_NAME))
+        SCREEN_MANAGER.add_widget(MainScreen(name=MAIN_SCREEN_NAME))
+        knect.start()
+        KinectGUI().run()
+        print("run gui")
+    finally:
+        knect.motor.ax.idle()
+        knect.off()
+        print('ending')
 # start (i already know how to play option), timer, keyboard, leaderboard, start
 
 # kinect_motor = odrive_motor('207C34975748', 15, 9)

@@ -1,3 +1,12 @@
+<WelcomeScreen>:
+
+    DPEAButton:
+        id: welcome
+        text: "Press to start"
+        on_press: root.play()
+        size: 100, 50
+        pos_hint:{"x": .5, "y": .5}
+
 <MainScreen>:
 
     on_enter: root.on_enter_mainscreen()
@@ -50,7 +59,7 @@
         text: "Enter Your Name: "
         pos_hint:{"x":0,"y": .45}
         color: 0, 0, 0, 1
-        font_size: 80
+        font_size: 40
 
     Label:
         id:timer
